@@ -26,6 +26,12 @@ const saveDatabase = () => {
     console.error('Error saving database:', error.message);
   }
 };
+
+const isValidUrl = (url) => {
+  const urlRegex = /^(https?:\/\/)?([a-z\d.-]+\.[a-z]{2,})(\/[^\s]*)?$/i;
+  return urlRegex.test(url);
+};
+
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
@@ -44,14 +50,7 @@ app.get('/', function(req, res) {
 app.post('/api/shorturl', (req, res) => {
   const originalUrl = req.body.url;
 
-  try {
-    new URL(originalUrl);
-  } catch (error) {
-    return res.json({ error: 'invalid url' });
-  }
-
-  const urlObject = new URL(originalUrl);
-  if (!urlObject.hostname) {
+  if (!isValidUrl(originalUrl)) {
     return res.json({ error: 'invalid url' });
   }
 
